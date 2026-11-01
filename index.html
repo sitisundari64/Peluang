@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172554">
+<title>MPI TKA Matematika Kelas IX — Peluang</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+ --navy:#172554;
+ --blue:#2563eb;
+ --cyan:#06b6d4;
+ --paper:#f4f8ff;
+}
+* {box-sizing:border-box}
+body {
+ font-family:'Nunito','Plus Jakarta Sans',sans-serif;
+ background:var(--paper);
+ color:#172554;
+}
+button,.clickable {
+ transition:transform .16s,box-shadow .16s;
+}
+button:active,.clickable:active {transform:scale(.97)}
+.panel {
+ background:white;
+ border:1px solid #dbeafe;
+ border-radius:24px;
+ box-shadow:0 12px 30px #1e3a8a0c;
+}
+.navbtn {
+ display:flex;
+ align-items:center;
+ gap:10px;
+ padding:12px 14px;
+ border-radius:14px;
+ color:#475569;
+ font-weight:800;
+ width:100%;
+ text-align:left;
+}
+.navbtn.active,.navbtn:hover {
+ background:#dbeafe;
+ color:#1d4ed8;
+}
+.action {
+ background:#2563eb;
+ color:white;
+ border-radius:14px;
+ padding:12px 18px;
+ font-weight:900;
+ box-shadow:0 5px 0 #1e40af;
+}
+.action.secondary {
+ background:#e0f2fe;
+ color:#075985;
+ box-shadow:0 5px 0 #bae6fd;
+}
+.pill {
+ border-radius:999px;
+ padding:6px 12px;
+ font-size:12px;
+ font-weight:900;
+}
+.section {display:none}
+.section.active {
+ display:block;
+ animation:appear .25s ease;
+}
+@keyframes appear {
+ from {opacity:0;transform:translateY(8px)}
+ to {opacity:1;transform:none}
+}
+.tab {
+ padding:10px 14px;
+ border-radius:12px;
+ font-weight:900;
+ background:#eff6ff;
+ color:#475569;
+}
+.tab.active {
+ background:#1d4ed8;
+ color:white;
+}
+.choice {
+ border:2px solid #dbeafe;
+ border-radius:14px;
+ padding:13px;
+ text-align:left;
+ font-weight:800;
+ width:100%;
+ background:white;
+}
+.choice:hover {
+ border-color:#60a5fa;
+ background:#eff6ff;
+}
+.choice.correct {
+ border-color:#16a34a;
+ background:#dcfce7;
+}
+.choice.wrong {
+ border-color:#ef4444;
+ background:#fee2e2;
+}
+.sticky {
+ background:#fff7cc;
+ border:1px solid #fde68a;
+ border-radius:4px 18px 18px 18px;
+ box-shadow:0 5px 12px #0f172a12;
+ transform:rotate(-1deg);
+}
+input,textarea {outline:none}
+input:focus,textarea:focus {
+ border-color:#60a5fa!important;
+ box-shadow:0 0 0 3px #bfdbfe;
+}
+@media(min-width:900px) {
+ .appgrid {
+  display:grid;
+  grid-template-columns:245px minmax(0,1fr);
+  gap:24px;
+ }
+ .sidebar {display:block!important}
+ .mobile-nav {display:none}
+}
+</style>
+</head>
+
+<body>
+
+<header class="bg-[#172554] text-white sticky top-0 z-40 shadow-lg">
+ <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+  <div class="flex items-center gap-3">
+   <div class="w-11 h-11 rounded-2xl bg-cyan-400 text-[#172554] grid place-items-center text-xl">
+    <i class="fa-solid fa-dice"></i>
+   </div>
+   <div>
+    <div class="font-black leading-tight">TKA MATEMATIKA • KELAS IX</div>
+    <div class="text-xs text-blue-200">Peluang & Frekuensi Relatif</div>
+   </div>
+  </div>
+  <div class="flex items-center gap-2">
+   <button onclick="go('home')" class="hidden sm:inline-flex bg-white/10 rounded-xl px-3 py-2 text-sm font-bold">
+    <i class="fa-solid fa-house mr-2"></i>Menu utama
+   </button>
+   <button id="audioBtn" onclick="toggleAudio()" class="rounded-xl px-3 py-2 bg-white/10 text-sm font-bold">
+    <i class="fa-solid fa-volume-xmark mr-2"></i>Audio OFF
+   </button>
+  </div>
+ </div>
+</header>
+
+<div class="max-w-7xl mx-auto px-4 py-6 appgrid">
+
+<aside class="sidebar hidden panel p-3 h-fit lg:sticky lg:top-24">
+ <div class="px-3 py-3 mb-2">
+  <div class="text-xs uppercase tracking-widest text-blue-500 font-black">Ruang belajar</div>
+  <div class="font-black text-lg">Jelajah Peluang</div>
+ </div>
+
+ <nav id="nav">
+  <button class="navbtn active" data-go="home"><i class="fa-solid fa-house w-5"></i>Beranda</button>
+  <button class="navbtn" data-go="tujuan"><i class="fa-solid fa-bullseye w-5"></i>Tujuan belajar</button>
+  <button class="navbtn" data-go="pemantik"><i class="fa-solid fa-lightbulb w-5"></i>Pertanyaan pemantik</button>
+  <button class="navbtn" data-go="materi"><i class="fa-solid fa-book-open w-5"></i>Materi interaktif</button>
+  <button class="navbtn" data-go="simulasi"><i class="fa-solid fa-flask w-5"></i>Simulasi peluang</button>
+  <button class="navbtn" data-go="kuis"><i class="fa-solid fa-clipboard-question w-5"></i>Kuis TKA</button>
+  <button class="navbtn" data-go="games"><i class="fa-solid fa-gamepad w-5"></i>Games</button>
+  <button class="navbtn" data-go="kesimpulan"><i class="fa-solid fa-flag-checkered w-5"></i>Kesimpulan</button>
+  <button class="navbtn" data-go="refleksi"><i class="fa-solid fa-note-sticky w-5"></i>Papan refleksi</button>
+ </nav>
+
+ <div class="mt-5 p-3 rounded-2xl bg-blue-50 text-xs text-slate-600">
+  <b class="text-blue-800">Tips:</b>
+  Jelajahi materi, coba simulasi, lalu selesaikan kuis dan refleksi.
+ </div>
+</aside>
+
+<main class="min-w-0">
+
+<!-- BERANDA -->
+<section id="home" class="section active">
+
+ <div class="rounded-[30px] p-7 md:p-10 text-white overflow-hidden relative"
+ style="background:linear-gradient(120deg,#172554,#1d4ed8 65%,#0891b2)">
+
+  <div class="absolute -right-10 -top-10 w-64 h-64 rounded-full border-[30px] border-white/10"></div>
+  <div class="absolute right-16 bottom-0 text-8xl opacity-20">
+   <i class="fa-solid fa-dice"></i>
+  </div>
+
+  <div class="relative max-w-2xl">
+   <span class="pill bg-cyan-300 text-blue-950">MEDIA PEMBELAJARAN INTERAKTIF</span>
+   <h1 class="text-3xl md:text-5xl font-black mt-5 leading-tight">
+    Berani Menebak,<br>Bijak Menghitung Peluang!
+   </h1>
+   <p class="mt-4 text-blue-100 text-lg">
+    Temukan bagaimana peluang membantu kita mengambil keputusan dalam permainan, undian, dan situasi sehari-hari.
+   </p>
+   <button onclick="go('tujuan')" class="mt-6 bg-cyan-300 text-blue-950 px-6 py-3 rounded-2xl font-black shadow-lg">
+    Mulai belajar <i class="fa-solid fa-arrow-right ml-2"></i>
+   </button>
+  </div>
+ </div>
+
+ <div class="grid sm:grid-cols-3 gap-4 mt-5">
+  <div class="panel p-5">
+   <div class="text-3xl text-blue-600"><i class="fa-solid fa-dice-five"></i></div>
+   <b class="block mt-2">Peluang</b>
+   <p class="text-sm text-slate-500">Mengukur kemungkinan sebuah kejadian.</p>
+  </div>
+  <div class="panel p-5">
+   <div class="text-3xl text-cyan-600"><i class="fa-solid fa-chart-column"></i></div>
+   <b class="block mt-2">Frekuensi relatif</b>
+   <p class="text-sm text-slate-500">Membandingkan banyak kejadian dengan percobaan.</p>
+  </div>
+  <div class="panel p-5">
+   <div class="text-3xl text-amber-500"><i class="fa-solid fa-brain"></i></div>
+   <b class="block mt-2">Bernalar</b>
+   <p class="text-sm text-slate-500">Menafsirkan informasi dan memecahkan masalah.</p>
+  </div>
+ </div>
+
+ <div class="panel p-5 mt-5">
+  <h2 class="font-black text-lg">Peta petualangan belajar</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4" id="homeCards"></div>
+ </div>
+
+ <div class="panel p-5 mt-5">
+  <h3 class="font-black">
+   <i class="fa-solid fa-circle-info text-blue-500 mr-2"></i>Petunjuk penggunaan
+  </h3>
+  <ol class="list-decimal ml-5 mt-2 text-sm text-slate-600 space-y-1">
+   <li>Pilih menu melalui navigasi.</li>
+   <li>Baca materi dan gunakan tab untuk berpindah bahasan.</li>
+   <li>Atur jumlah objek pada simulasi untuk mengamati peluang.</li>
+   <li>Kerjakan kuis dari level mudah hingga sulit.</li>
+   <li>Isi refleksi untuk membagikan pengalaman belajar.</li>
+  </ol>
+ </div>
+</section>
+
+<!-- TUJUAN -->
+<section id="tujuan" class="section">
+ <div class="mb-5">
+  <span class="pill bg-blue-100 text-blue-700">01 • ARAH BELAJAR</span>
+  <h1 class="text-3xl font-black mt-2">Tujuan Pembelajaran</h1>
+  <p class="text-slate-500">Setelah kegiatan belajar, siswa diharapkan mampu:</p>
+ </div>
+
+ <div class="grid md:grid-cols-2 gap-4">
+  <div class="panel p-5">
+   <div class="text-blue-600 text-2xl"><i class="fa-solid fa-calculator"></i></div>
+   <h3 class="font-black mt-2">Memahami peluang</h3>
+   <p class="text-slate-600 text-sm">Menjelaskan ruang sampel, kejadian, dan nilai peluang kejadian sederhana.</p>
+  </div>
+  <div class="panel p-5">
+   <div class="text-cyan-600 text-2xl"><i class="fa-solid fa-scale-balanced"></i></div>
+   <h3 class="font-black mt-2">Menentukan peluang bersyarat konteks</h3>
+   <p class="text-slate-600 text-sm">Menentukan peluang kejadian tunggal ketika terdapat dua kemungkinan kondisi atau informasi pembatas.</p>
+  </div>
+  <div class="panel p-5">
+   <div class="text-amber-500 text-2xl"><i class="fa-solid fa-box-open"></i></div>
+   <h3 class="font-black mt-2">Menalar tanpa pengembalian</h3>
+   <p class="text-slate-600 text-sm">Memperkirakan jumlah awal objek dari peluang pengambilan bertahap tanpa mengembalikan objek.</p>
+  </div>
+  <div class="panel p-5">
+   <div class="text-emerald-600 text-2xl"><i class="fa-solid fa-chart-line"></i></div>
+   <h3 class="font-black mt-2">Menggunakan frekuensi relatif</h3>
+   <p class="text-slate-600 text-sm">Menghitung dan menafsirkan frekuensi relatif dari hasil percobaan atau data yang diberikan.</p>
+  </div>
+ </div>
+
+ <div class="panel p-5 mt-4 bg-blue-50">
+  <b>Mengapa penting?</b>
+  <p class="text-sm text-slate-600 mt-1">
+   Peluang membantu kita menilai kemungkinan, membaca data, dan membuat keputusan secara masuk akal—bukan sekadar menebak.
+  </p>
+ </div>
+</section>
+
+<!-- PEMANTIK -->
+<section id="pemantik" class="section">
+ <span class="pill bg-amber-100 text-amber-700">02 • PIKIRKAN</span>
+ <h1 class="text-3xl font-black mt-2 mb-2">Pertanyaan Pemantik</h1>
+ <p class="text-slate-500 mb-5">Tarik napas, amati situasi, lalu tekan kartu untuk membuka tantangan.</p>
+
+ <div class="grid md:grid-cols-2 gap-5">
+  <div class="panel p-6">
+   <div class="text-5xl">🎲</div>
+   <h3 class="font-black text-xl mt-3">Kartu 1 — Dadu keberuntungan</h3>
+   <p class="text-slate-500 text-sm mt-2">Sebuah dadu memiliki enam sisi bernomor 1 sampai 6.</p>
+   <button class="action mt-4" onclick="reveal('reveal1')">Buka pertanyaan</button>
+   <div id="reveal1" class="hidden mt-4 p-4 bg-blue-50 rounded-2xl">
+    <b>Jika kamu ingin memperoleh angka lebih dari 4, apakah peluangnya sama dengan memperoleh angka genap?</b>
+    <p class="text-sm mt-2">Jelaskan dengan menyebutkan anggota kejadian yang mungkin.</p>
+   </div>
+  </div>
+
+  <div class="panel p-6">
+   <div class="text-5xl">🍬</div>
+   <h3 class="font-black text-xl mt-3">Kartu 2 — Permen dalam kantong</h3>
+   <p class="text-slate-500 text-sm mt-2">Kantong berisi permen merah dan biru. Satu permen diambil tanpa dikembalikan.</p>
+   <button class="action mt-4" onclick="reveal('reveal2')">Buka pertanyaan</button>
+   <div id="reveal2" class="hidden mt-4 p-4 bg-cyan-50 rounded-2xl">
+    <b>Apakah peluang mengambil permen merah pada pengambilan kedua tetap sama setelah permen pertama tidak dikembalikan?</b>
+    <p class="text-sm mt-2">Apa informasi yang berubah? Bagaimana pengaruhnya terhadap peluang?</p>
+   </div>
+  </div>
+ </div>
+
+ <div class="panel p-5 mt-5">
+  <b>Mindful moment</b>
+  <p class="text-sm text-slate-600 mt-1">
+   Diam selama 20 detik. Bayangkan sebuah keputusan yang pernah kamu ambil berdasarkan kemungkinan. Apa informasi yang kamu gunakan?
+  </p>
+ </div>
+</section>
+
+<!-- MATERI -->
+<section id="materi" class="section">
+ <span class="pill bg-blue-100 text-blue-700">03 • KENALI KONSEP</span>
+ <h1 class="text-3xl font-black mt-2">Materi Belajar Interaktif</h1>
+ <div id="materiTabs" class="flex flex-wrap gap-2 mt-5"></div>
+ <div id="materiContent" class="panel p-5 md:p-7 mt-4"></div>
+</section>
+
+<!-- SIMULASI -->
+<section id="simulasi" class="section">
+ <span class="pill bg-cyan-100 text-cyan-800">04 • COBA SENDIRI</span>
+ <h1 class="text-3xl font-black mt-2">Laboratorium Peluang</h1>
+ <p class="text-slate-500 mt-1">Ubah komposisi objek dan lakukan percobaan pengambilan.</p>
+
+ <div class="grid lg:grid-cols-2 gap-4 mt-5">
+  <div class="panel p-5">
+   <h3 class="font-black text-lg">Atur isi kantong</h3>
+
+   <label class="block mt-4 text-sm font-bold">
+    Bola merah: <b id="redVal">4</b>
+   </label>
+   <input id="redCount" type="range" min="1" max="10" value="4" class="w-full" oninput="updateSim()">
+
+   <label class="block mt-3 text-sm font-bold">
+    Bola biru: <b id="blueVal">6</b>
+   </label>
+   <input id="blueCount" type="range" min="1" max="10" value="6" class="w-full" oninput="updateSim()">
+
+   <div id="balls" class="flex flex-wrap gap-2 my-5"></div>
+
+   <div class="bg-blue-50 rounded-2xl p-4">
+    <div class="text-sm text-slate-500">Peluang mengambil bola merah</div>
+    <div id="probText" class="text-3xl font-black text-blue-700">4/10 = 0,4</div>
+   </div>
+
+   <button class="action mt-4" onclick="drawBall()">Ambil satu bola</button>
+   <button class="action secondary mt-4" onclick="resetDraw()">Reset kantong</button>
+   <p id="drawMsg" class="text-sm mt-3 text-slate-600">Belum ada pengambilan.</p>
+  </div>
+
+  <div class="panel p-5">
+   <h3 class="font-black text-lg">Eksperimen tanpa pengembalian</h3>
+   <p class="text-sm text-slate-500 mt-1">Setiap bola yang terambil tidak dimasukkan kembali.</p>
+
+   <div class="grid grid-cols-2 gap-3 mt-4">
+    <div class="bg-rose-50 rounded-2xl p-4">
+     <div class="text-xs text-slate-500">Merah tersisa</div>
+     <div id="redLeft" class="text-3xl font-black text-rose-600">4</div>
+    </div>
+    <div class="bg-blue-50 rounded-2xl p-4">
+     <div class="text-xs text-slate-500">Biru tersisa</div>
+     <div id="blueLeft" class="text-3xl font-black text-blue-600">6</div>
+    </div>
+   </div>
+
+   <div class="mt-4">
+    <b>Riwayat pengambilan</b>
+    <div id="history" class="min-h-20 p-3 bg-slate-50 rounded-xl mt-2 text-sm text-slate-500">Belum ada data.</div>
+   </div>
+
+   <div class="mt-4 p-4 rounded-2xl bg-amber-50 text-sm">
+    <b>Amati:</b> setelah satu bola terambil, jumlah seluruh bola berubah. Karena itu peluang pengambilan berikutnya dapat berubah.
+   </div>
+  </div>
+ </div>
+
+ <div class="panel p-5 mt-4">
+  <h3 class="font-black">Tantangan penalaran</h3>
+  <p class="text-sm text-slate-600 mt-2">
+   Dalam kantong terdapat 3 bola merah dan beberapa bola biru. Peluang mengambil bola merah adalah 3/8. Berapa bola biru mula-mula?
+  </p>
+  <div class="flex gap-2 mt-3">
+   <input id="estimate" type="number" min="0" placeholder="Jumlah bola biru" class="border rounded-xl p-3 w-44">
+   <button class="action" onclick="checkEstimate()">Periksa</button>
+  </div>
+  <p id="estimateMsg" class="text-sm mt-2"></p>
+ </div>
+</section>
+
+<!-- KUIS -->
+<section id="kuis" class="section">
+ <span class="pill bg-violet-100 text-violet-700">05 • UJI KOMPETENSI</span>
+ <h1 class="text-3xl font-black mt-2">Kuis TKA Matematika</h1>
+
+ <div id="quizStart" class="panel p-5 mt-5">
+  <label class="font-bold text-sm">Nama untuk sertifikat</label>
+  <input id="studentName" class="w-full border rounded-xl p-3 mt-2" placeholder="Contoh: Shaka">
+
+  <h3 class="font-black mt-5">Pilih tingkat tantangan</h3>
+  <div class="grid sm:grid-cols-3 gap-3 mt-3">
+   <button class="panel p-4 text-left hover:border-blue-500" onclick="startQuiz('mudah')">
+    <div class="text-2xl">🌱</div>
+    <b>Mudah</b>
+    <p class="text-xs text-slate-500">Konsep dasar dan hitungan langsung</p>
+   </button>
+   <button class="panel p-4 text-left hover:border-blue-500" onclick="startQuiz('sedang')">
+    <div class="text-2xl">🚀</div>
+    <b>Sedang</b>
+    <p class="text-xs text-slate-500">Penerapan dan interpretasi data</p>
+   </button>
+   <button class="panel p-4 text-left hover:border-blue-500" onclick="startQuiz('sulit')">
+    <div class="text-2xl">🧠</div>
+    <b>Sulit</b>
+    <p class="text-xs text-slate-500">Penalaran dan masalah kontekstual</p>
+   </button>
+  </div>
+ </div>
+
+ <div id="quizPlay" class="hidden panel p-5 mt-5">
+  <div class="flex justify-between items-center gap-2">
+   <span id="quizLevel" class="pill bg-blue-100 text-blue-700"></span>
+   <button class="text-sm font-black text-rose-600" onclick="quitQuiz()">Keluar / ganti level</button>
+  </div>
+  <div class="flex justify-between text-sm font-bold mt-4">
+   <span id="qCounter"></span>
+   <span id="scoreNow">Skor: 0</span>
+  </div>
+  <div class="h-2 bg-slate-100 rounded-full mt-2">
+   <div id="qProgress" class="h-2 bg-cyan-500 rounded-full" style="width:0%"></div>
+  </div>
+  <h3 id="question" class="font-black text-xl mt-5"></h3>
+  <div id="answers" class="grid gap-3 mt-4"></div>
+  <div id="feedback" class="hidden mt-4 rounded-2xl p-4 text-sm"></div>
+  <button id="nextQ" class="action mt-5 hidden" onclick="nextQuestion()">Soal selanjutnya</button>
+ </div>
+
+ <div id="quizResult" class="hidden panel p-7 mt-5 text-center"></div>
+</section>
+
+<!-- GAMES -->
+<section id="games" class="section">
+ <span class="pill bg-emerald-100 text-emerald-700">06 • MAIN SAMBIL BELAJAR</span>
+ <h1 class="text-3xl font-black mt-2">Game: Pasangkan Peluang!</h1>
+ <p class="text-slate-500 mt-1">Pilih satu kartu situasi, lalu pilih nilai peluang yang tepat. Bisa disentuh pada ponsel.</p>
+
+ <div class="panel p-5 mt-5">
+  <div class="flex justify-between items-center">
+   <b id="gameProgress">Pasangan benar: 0/4</b>
+   <button class="action secondary text-sm" onclick="newGame()">Acak ulang</button>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-5 mt-5">
+   <div>
+    <h3 class="font-black mb-2">Situasi</h3>
+    <div id="gameLeft" class="grid gap-2"></div>
+   </div>
+   <div>
+    <h3 class="font-black mb-2">Nilai peluang</h3>
+    <div id="gameRight" class="grid gap-2"></div>
+   </div>
+  </div>
+  <p id="gameMsg" class="text-sm mt-4 text-slate-600">Pilih kartu dari kolom kiri dan kanan.</p>
+ </div>
+</section>
+
+<!-- KESIMPULAN -->
+<section id="kesimpulan" class="section">
+ <span class="pill bg-indigo-100 text-indigo-700">07 • RANGKUMAN</span>
+ <h1 class="text-3xl font-black mt-2">Kesimpulan Pembelajaran</h1>
+
+ <div class="panel p-6 mt-5 space-y-4">
+  <div>
+   <b>1. Peluang teoretis</b>
+   <p class="text-slate-600 text-sm">
+    Jika semua hasil sama mungkin, peluang kejadian A adalah P(A) = n(A)/n(S), dengan n(A) banyak hasil yang mendukung A dan n(S) banyak anggota ruang sampel.
+   </p>
+  </div>
+
+  <div>
+   <b>2. Rentang nilai peluang</b>
+   <p class="text-slate-600 text-sm">
+    Nilai peluang berada antara 0 dan 1. Nilai 0 berarti mustahil, sedangkan 1 berarti pasti.
+   </p>
+  </div>
+
+  <div>
+   <b>3. Frekuensi relatif</b>
+   <p class="text-slate-600 text-sm">
+    Frekuensi relatif = frekuensi kejadian / banyak percobaan. Semakin banyak percobaan, hasil relatif biasanya memberi gambaran yang lebih stabil tentang peluang.
+   </p>
+  </div>
+
+  <div>
+   <b>4. Tanpa pengembalian</b>
+   <p class="text-slate-600 text-sm">
+    Objek yang sudah diambil tidak dikembalikan, sehingga jumlah objek dan komposisi berubah. Peluang pengambilan selanjutnya harus dihitung dari kondisi terbaru.
+   </p>
+  </div>
+
+  <div class="bg-blue-50 rounded-2xl p-4">
+   <b>Ingat!</b>
+   <p class="text-sm">Baca informasi dengan cermat, tentukan ruang sampel, identifikasi kejadian, lalu hitung dan tafsirkan hasilnya.</p>
+  </div>
+
+  <button class="action" onclick="go('kuis')">Uji pemahaman saya</button>
+ </div>
+</section>
+
+<!-- REFLEKSI -->
+<section id="refleksi" class="section">
+ <span class="pill bg-amber-100 text-amber-700">08 • SUARA SISWA</span>
+ <h1 class="text-3xl font-black mt-2">Papan Refleksi Kolaboratif</h1>
+ <p class="text-slate-500 mt-1">Tuliskan pengalaman belajar. Catatan akan muncul sebagai sticky notes.</p>
+
+ <div class="panel p-5 mt-5">
+  <form id="reflectionForm" class="grid md:grid-cols-2 gap-3">
+   <div>
+    <label class="text-sm font-bold">Nama</label>
+    <input id="refName" required class="w-full border rounded-xl p-3 mt-1" placeholder="Shaka / Haflasea">
+   </div>
+   <div>
+    <label class="text-sm font-bold">Perasaan / kesan</label>
+    <select id="refMood" class="w-full border rounded-xl p-3 mt-1">
+     <option>😊 Senang dan paham</option>
+     <option>🤔 Tertantang untuk berpikir</option>
+     <option>😐 Biasa saja</option>
+     <option>😵 Masih bingung</option>
+    </select>
+   </div>
+   <div class="md:col-span-2">
+    <label class="text-sm font-bold">Pesan refleksi</label>
+    <textarea id="refMessage" required rows="3" class="w-full border rounded-xl p-3 mt-1" placeholder="Hari ini saya belajar bahwa..."></textarea>
+   </div>
+   <div class="md:col-span-2 flex flex-wrap items-center gap-3">
+    <button class="action" type="submit">Tempel refleksi</button>
+    <span id="refStatus" class="text-xs text-slate-500">Catatan disimpan di perangkat jika endpoint spreadsheet belum diatur.</span>
+   </div>
+  </form>
+ </div>
+
+ <div id="notes" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5"></div>
+</section>
+
+</main>
+</div>
+
+<div class="mobile-nav fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-blue-100 p-2 flex justify-around shadow-lg">
+ <button onclick="go('home')" class="text-blue-700 text-xs font-black"><i class="fa-solid fa-house block text-lg"></i>Home</button>
+ <button onclick="go('materi')" class="text-slate-600 text-xs font-black"><i class="fa-solid fa-book block text-lg"></i>Materi</button>
+ <button onclick="go('simulasi')" class="text-slate-600 text-xs font-black"><i class="fa-solid fa-flask block text-lg"></i>Simulasi</button>
+ <button onclick="go('kuis')" class="text-slate-600 text-xs font-black"><i class="fa-solid fa-circle-question block text-lg"></i>Kuis</button>
+ <button onclick="go('refleksi')" class="text-slate-600 text-xs font-black"><i class="fa-solid fa-note-sticky block text-lg"></i>Refleksi</button>
+</div>
+
+<footer class="text-center text-xs text-slate-400 py-8 pb-24">
+ Dikembangkan oleh <b>Siti Sundari, M.Pd.</b> • SMPN 2 Ganeas • Copyright © 2026
+</footer>
